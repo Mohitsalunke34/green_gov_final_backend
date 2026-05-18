@@ -1,0 +1,34 @@
+2026-05-18 16:29:11.150  INFO 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 29832 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
+2026-05-18 16:29:11.180 DEBUG 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-18 16:29:11.181  INFO 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-18 16:29:11.316  INFO 29832 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-18 16:29:11.316  INFO 29832 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=greengov-profile-service, profiles=[default], label=null, version=2155351758ecfad7185f19e1c181ff355fe7d99a, state=
+2026-05-18 16:29:11.322  INFO 29832 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-18 16:29:11.322  INFO 29832 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-18 16:29:15.709  INFO 29832 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-18 16:29:16.078  INFO 29832 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 335 ms. Found 2 JPA repository interfaces.
+2026-05-18 16:29:17.017  INFO 29832 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
+2026-05-18 16:29:19.100  INFO 29832 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 9056 (http)
+2026-05-18 16:29:19.130  INFO 29832 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-18 16:29:19.131  INFO 29832 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-05-18 16:29:19.313  INFO 29832 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 7990 ms
+2026-05-18 16:29:20.275  INFO 29832 --- [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-18 16:29:20.417  INFO 29832 --- [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-05-18 16:29:21.738  INFO 29832 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-18 16:29:21.817  INFO 29832 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-18 16:29:22.570  INFO 29832 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@53e2d4a0
+2026-05-18 16:29:22.574  INFO 29832 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-18 16:29:22.695  WARN 29832 --- [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-18 16:29:22.747  INFO 29832 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/profile_service?createDatabaseIfNotExist=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.44
+	Default catalog/schema: profile_service/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-18 16:29:32.010  INFO 29832 --- [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
