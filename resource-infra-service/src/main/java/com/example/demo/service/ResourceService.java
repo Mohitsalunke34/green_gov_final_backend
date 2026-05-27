@@ -1,22 +1,27 @@
 package com.example.demo.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.AllocateResourceRequest;
 import com.example.demo.dto.ResourceCreateRequestDTO;
-import com.example.demo.dto.ResourceResponseDTO;
+import com.example.demo.model.Resource;
 
+
+@Service
 public interface ResourceService {
-	ResourceResponseDTO addResource(ResourceCreateRequestDTO dto);
+    
+    Resource createResource(ResourceCreateRequestDTO request);
 
-	ResourceResponseDTO updateResource(long resourceId, ResourceCreateRequestDTO dto);
+    Resource allocateResource(Long resourceId, AllocateResourceRequest request);
 
-	ResourceResponseDTO getResource(long resourceId);
+    Page<Resource> getAllResources(Pageable pageable);
 
-	List<ResourceResponseDTO> getAllResources();
+    Resource getResourceById(Long resourceId);
 
-	void deleteResource(long resourceId);
-
-	ResourceResponseDTO updateStatus(long resourceId, String status);
-
-	List<ResourceResponseDTO> getResourcesByProjectId(long projectId);
+    void deleteResource(Long resourceId);
+    
+    
+    
 }

@@ -19,7 +19,7 @@ public interface ProgramClient {
 	@GetMapping("/api/applications/approved/by-participant/{participantId}")
 	List<ApprovedApplicationLookupDTO> getApprovedApplicationsByParticipant(
 			@PathVariable("participantId") Long participantId);
-
+	
 	@GetMapping("/api/applications/fetchById/{id}")
 	ApplicationDTO getApplicationById(@PathVariable("id") Long id);
 
@@ -28,5 +28,8 @@ public interface ProgramClient {
 
 	@PutMapping("/api/programs/{id}/deduct-budget")
 	void deductProgramBudget(@PathVariable("id") Long programId, @RequestParam("amount") BigDecimal amount);
+	
+	@PutMapping("/api/applications/{id}/link-incentive")
+	void linkIncentiveToApplication(@PathVariable("id") Long applicationId, @RequestParam("incentiveId") Long incentiveId);
 
 }

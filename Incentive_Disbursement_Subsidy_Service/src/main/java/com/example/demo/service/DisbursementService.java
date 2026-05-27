@@ -11,5 +11,7 @@ public interface DisbursementService {
 
 	List<DisbursementResponseDTO> getAllDisbursement(Long incentiveId);
 
-	DisbursementResponseDTO getByDisbursementId(Long incentiveId, Long disbursementId);
+	
+	
+
 }

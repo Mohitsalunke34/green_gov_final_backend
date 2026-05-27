@@ -8,15 +8,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ProgramApplicationRequestDto;
 import com.example.demo.dto.ProgramApplicationResponseDto;
 import com.example.demo.dto.client_dto.ApprovedApplicationLookupDTO;
+import com.example.demo.repository.ProgramApplicationRepository;
 import com.example.demo.service.ProgramApplicationService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProgramApplicationController {
 
 	private final ProgramApplicationService service;
+	private final ProgramApplicationRepository programApplicationRepo;
 
 	/* ================= APPLY ================= */
 
@@ -81,5 +86,21 @@ public class ProgramApplicationController {
 
 		return ResponseEntity.ok(service.getApprovedApplicationsByParticipant(participantId));
 	}
+	
+	@PutMapping("/{id}/link-incentive")
+    @Transactional
+    public ResponseEntity<Void> linkIncentiveToApplication(
+            @PathVariable("id") Long id, 
+            @RequestParam("incentiveId") Long incentiveId) {
+            
+        // Use a direct update query to avoid LazyInitializationException on the nested EnergyProgram proxy
+        int updatedRows = programApplicationRepo.updateIncentiveId(id, incentiveId);
+        
+        if (updatedRows == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok().build();
+    }
 
 }

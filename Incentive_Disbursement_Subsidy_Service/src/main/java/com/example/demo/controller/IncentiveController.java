@@ -50,20 +50,12 @@ public class IncentiveController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
-	/* ================= READ ================= */
-
-	@GetMapping("/beneficiary/{beneficiaryId}")
-	public ResponseEntity<List<IncentiveResponseDTO>> getByBeneficiary(@PathVariable Long beneficiaryId) {
-
-		return ResponseEntity.ok(incentiveService.getByBeneficiary(beneficiaryId));
-	}
 
 	@GetMapping("/fetchById/{incentiveId}")
-	public ResponseEntity<IncentiveResponseDTO> getByIncentiveId(@PathVariable Long incentiveId) {
-
+	public ResponseEntity<IncentiveResponseDTO> getByIncentiveId(@PathVariable Long incentiveId){
 		return ResponseEntity.ok(incentiveService.getByIncentiveId(incentiveId));
 	}
-
+	
 	@GetMapping("/fetchAllIncentives")
 	public ResponseEntity<List<IncentiveResponseDTO>> getAllIncentives() {
 
@@ -80,13 +72,14 @@ public class IncentiveController {
 		return ResponseEntity.ok(deleted);
 	}
 
-	/* ================= INTERNAL ================= */
+	
 
 	@GetMapping("/{id}/exists")
 	public ResponseEntity<Boolean> incentiveExists(@PathVariable Long id) {
 		return ResponseEntity.ok(incentiveService.incentiveExists(id));
 	}
 
+	//use by reports service
 	@GetMapping("/report-metrics")
 	public Map<String, Object> getIncentiveReportMetrics() {
 
@@ -114,12 +107,13 @@ public class IncentiveController {
 				.map(i -> new SubjectLookupDTO(i.getIncentiveId(), "Incentive #" + i.getIncentiveId())).toList());
 	}
 	
-	/**
-	 * PARTICIPANT LOOKUP
-	 * Used by Incentive UI to select participant by legal name
-	 */
+	
+//	 Used by Incentive UI to select participant by legal name
+	 
 	@GetMapping("/participants/lookup")
 	public ResponseEntity<List<ParticipantBasicDTO>> getParticipantsLookup() {
 	    return ResponseEntity.ok(participantClient.getParticipants());
 	}
+	
+
 }

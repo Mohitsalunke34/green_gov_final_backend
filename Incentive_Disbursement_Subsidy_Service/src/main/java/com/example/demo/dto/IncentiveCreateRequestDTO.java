@@ -7,14 +7,9 @@ import lombok.Data;
 @Data
 public class IncentiveCreateRequestDTO {
 
-	@NotNull(message = "Participant ID is required")
+	@NotNull
 	private Long participantId;
-
-//    @NotNull(message = "Program ID is required")
-	private Long programId;
-
-//    @NotNull(message = "Beneficiary ID is required")
-	private Long beneficiaryId;
+	
 
 	@NotNull(message = "Amount is required")
 	@Min(value = 0, message = "Amount must be positive")

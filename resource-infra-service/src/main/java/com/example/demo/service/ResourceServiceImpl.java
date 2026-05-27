@@ -1,188 +1,153 @@
 package com.example.demo.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.client.NotificationClient; // Added Import
 import com.example.demo.client.ProjectClient;
-import com.example.demo.dto.NotificationRequestDTO; // Added Import
+import com.example.demo.dto.AllocateResourceRequest;
 import com.example.demo.dto.ProjectResponseDTO;
 import com.example.demo.dto.ResourceCreateRequestDTO;
-import com.example.demo.dto.ResourceResponseDTO;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.Resources;
+import com.example.demo.model.Resource;
 import com.example.demo.repository.ResourceRepository;
 
+import enums.ResourceStatus;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ResourceServiceImpl implements ResourceService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ResourceServiceImpl.class);
-	private static final List<String> ALLOWED_TYPES = Arrays.asList("Funds", "Equipment");
-	private static final List<String> ALLOWED_STATUSES = Arrays.asList("Available", "Allocated", "Depleted");
+    private final ResourceRepository resourceRepository;
+    private final ProjectClient projectClient;
 
-	private final ResourceRepository resourceRepository;
-	private final ProjectClient projectClient;
-	private final NotificationClient notificationClient;
+    @Override
+    @Transactional
+    public Resource createResource(ResourceCreateRequestDTO request) {
+        log.info("Attempting to create resource '{}' for Project ID: {}", request.getResourceName(), request.getProjectId());
 
-	@Override
-	public ResourceResponseDTO addResource(ResourceCreateRequestDTO dto) {
-	    logger.info("Attempting to add resource for Project ID: {}", dto.getProjectId());
-	    validateDto(dto);
+        ProjectResponseDTO project = fetchProject(request.getProjectId());
 
-	    // This call returns the project details including the title
-	    ProjectResponseDTO project = fetchProject(dto.getProjectId());
+        if (!"Approved".equalsIgnoreCase(project.getStatus())) {
+            log.warn("Validation failed: Project ID {} status is '{}', expected 'Approved'", request.getProjectId(), project.getStatus());
+            throw new ValidationException("Resources can only be allocated to 'Approved' projects. Current status: " + project.getStatus());
+        }
 
-	    if (!"Approved".equalsIgnoreCase(project.getStatus())) {
-	        throw new ValidationException("Resources can only be allocated to 'Approved' projects.");
-	    }
+        Resource resource = Resource.builder()
+                .projectId(request.getProjectId())
+                .projectName(project.getTitle()) 
+                .resourceName(request.getResourceName())
+                .type(request.getType())
+                .totalQuantity(request.getTotalQuantity())
+                .availableQuantity(request.getTotalQuantity())
+                .status(ResourceStatus.AVAILABLE)
+                .build();
 
-	    // Capture the title from the Feign Client response
-	    Resources resource = Resources.builder()
-	            .projectId(dto.getProjectId())
-	            .projectTitle(project.getTitle()) // Map the title here
-	            .type(dto.getType())
-	            .quantity(dto.getQuantity())
-	            .status("Available")
-	            .build();
+        Resource savedResource = resourceRepository.save(resource);
+        log.info("Resource successfully created with ID: {} and status: {}", savedResource.getResourceId(), savedResource.getStatus());
+        return savedResource;
+    }
 
-	    Resources saved = resourceRepository.save(resource);
+    @Override
+    @Transactional
+    public Resource allocateResource(Long resourceId, AllocateResourceRequest request) {
+        log.info("Processing allocation request for Resource ID: {}, Quantity: {}", resourceId, request.getAllocationQuantity());
 
-	    // Trigger Notification
-	    sendInternalNotification("New resource (" + dto.getType() + ") allocated to Project: " + project.getTitle(),
-	            "RESOURCE_ALLOCATION", saved.getResourceId());
+        Resource resource = resourceRepository.findById(resourceId)
+                .orElseThrow(() -> {
+                    log.error("Allocation failed: Resource ID {} not found", resourceId);
+                    return new ResourceNotFoundException("Resource not found");
+                });
 
-	    return mapToResponseDTO(saved);
-	}
-	@Override
-	public ResourceResponseDTO updateResource(long resourceId, ResourceCreateRequestDTO dto) {
-	    validateDto(dto);
-	    Resources existing = resourceRepository.findById(resourceId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Resource not found with ID: " + resourceId));
-	    ProjectResponseDTO project = fetchProject(dto.getProjectId());
-	    existing.setProjectId(dto.getProjectId());
-	    
-	    existing.setProjectTitle(project.getTitle()); 
-	    
-	    existing.setType(dto.getType());
-	    existing.setQuantity(dto.getQuantity());
+        if (request.getAllocationQuantity() > resource.getAvailableQuantity()) {
+            log.warn("Allocation rejected: Insufficient quantity for Resource ID {}. Requested: {}, Available: {}", 
+                    resourceId, request.getAllocationQuantity(), resource.getAvailableQuantity());
+            throw new ValidationException("Insufficient quantity available. Requested: " 
+                    + request.getAllocationQuantity() + ", Available: " + resource.getAvailableQuantity());
+        }
 
-	    ResourceResponseDTO response = mapToResponseDTO(resourceRepository.save(existing));
+        Double remainingQuantity = resource.getAvailableQuantity() - request.getAllocationQuantity();
+        resource.setAvailableQuantity(remainingQuantity);
 
-	    
-	    sendInternalNotification("Resource ID " + resourceId + " details updated for Project: " + project.getTitle(), 
-	            "RESOURCE_UPDATE", resourceId);
+        
+        if (remainingQuantity == 0) {
+            resource.setStatus(ResourceStatus.EXHAUSTED);
+        } else {
+            resource.setStatus(ResourceStatus.ALLOCATED);
+        }
 
-	    return response;
-	}
+        Resource updatedResource = resourceRepository.save(resource);
+        log.info("Resource ID {} updated. Remaining Quantity: {}, Status set to: {}", 
+                resourceId, remainingQuantity, updatedResource.getStatus());
 
-	@Override
-	@Transactional
-	public void deleteResource(long resourceId) {
-		Resources resource = resourceRepository.findById(resourceId).orElseThrow(
-				() -> new ResourceNotFoundException("Cannot delete: Resource ID " + resourceId + " does not exist."));
+        return updatedResource;
+    }
 
-		if ("Allocated".equalsIgnoreCase(resource.getStatus())) {
-			throw new ValidationException("Cannot delete resource: It is currently 'Allocated'.");
-		}
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Resource> getAllResources(Pageable pageable) {
+        log.debug("Fetching page {} of resources", pageable.getPageNumber());
+        return resourceRepository.findAll(pageable);
+    }
 
-		resourceRepository.deleteById(resourceId);
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getResourceById(Long resourceId) {
+        log.debug("Fetching resource details for ID: {}", resourceId);
+        return resourceRepository.findById(resourceId)
+                .orElseThrow(() -> {
+                    log.error("Fetch failed: Resource ID {} not found", resourceId);
+                    return new ResourceNotFoundException("Resource not found");
+                });
+    }
 
-		// Trigger In-App Notification
-		sendInternalNotification("Resource ID " + resourceId + " has been deleted.", "RESOURCE_DELETE", resourceId);
-	}
+    @Override
+    @Transactional
+    public void deleteResource(Long resourceId) {
+        log.info("Attempting to delete Resource ID: {}", resourceId);
 
-	@Override
-	public ResourceResponseDTO updateStatus(long resourceId, String status) {
-		Resources resource = resourceRepository.findById(resourceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        Resource resource = resourceRepository.findById(resourceId)
+                .orElseThrow(() -> {
+                    log.error("Deletion failed: Resource ID {} not found", resourceId);
+                    return new ResourceNotFoundException("Resource not found");
+                });
 
-		if (status == null || !ALLOWED_STATUSES.contains(status)) {
-			throw new ValidationException("Invalid status. Allowed: " + ALLOWED_STATUSES);
-		}
+        if (resource.getStatus() == ResourceStatus.ALLOCATED) {
+            log.warn("Deletion rejected: Resource ID {} is currently status ALLOCATED", resourceId);
+            throw new ValidationException("Cannot delete resource with ID " + resourceId + " because its current status is ALLOCATED.");
+        }
 
-		resource.setStatus(status);
-		ResourceResponseDTO response = mapToResponseDTO(resourceRepository.save(resource));
+        resourceRepository.delete(resource);
+        log.info("Resource ID {} successfully deleted from database", resourceId);
+    }
+    
+    
+    @CircuitBreaker(name = "projectServiceBreaker", fallbackMethod = "fallbackFetchProject")
+    private ProjectResponseDTO fetchProject(long projectId) {
+        log.info("Calling Project Microservice for Project ID: {}", projectId);
+        ResponseEntity<ProjectResponseDTO> response = projectClient.getProjectById(projectId);
+        ProjectResponseDTO project = response.getBody();
 
-		// Trigger In-App Notification
-		sendInternalNotification("Resource ID " + resourceId + " status changed to " + status, "STATUS_CHANGE",
-				resourceId);
+        if (project == null || "SERVICE_FAILURE".equals(project.getStatus())) {
+            throw new RuntimeException("Target payload missing or returned service failure state");
+        }
+        return project;
+    }
 
-		return response;
-	}
-
-	private void sendInternalNotification(String message, String category, Long entityId) {
-		NotificationRequestDTO notifyReq = NotificationRequestDTO.builder().userId(4L).message(message)
-				.category(category).entityId(entityId).sendEmail(true).email("hobip98770@minitts.net").build();
-
-		notificationClient.createNotification(notifyReq);
-
-		logger.info("Line after notification call reached successfully.");
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public ResourceResponseDTO getResource(long resourceId) {
-		Resources resource = resourceRepository.findById(resourceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Resource ID " + resourceId + " not found."));
-		return mapToResponseDTO(resource);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<ResourceResponseDTO> getAllResources() {
-		return resourceRepository.findAll().stream().map(this::mapToResponseDTO).collect(Collectors.toList());
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<ResourceResponseDTO> getResourcesByProjectId(long projectId) {
-		fetchProject(projectId);
-		List<Resources> resources = resourceRepository.findByProjectId(projectId);
-		return resources.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
-	}
-
-	private ProjectResponseDTO fetchProject(long projectId) {
-	    ResponseEntity<ProjectResponseDTO> response = projectClient.getProjectById(projectId);
-	    ProjectResponseDTO project = response.getBody();
-
-	    if (project == null || "SERVICE_FAILURE".equals(project.getStatus())) {
-	        throw new ResourceNotFoundException("Project Service is currently unavailable. Please try again later.");
-	    }
-	    
-	    return project;
-	}
-	private void validateDto(ResourceCreateRequestDTO dto) {
-		if (!ALLOWED_TYPES.contains(dto.getType())) {
-			throw new ValidationException("Invalid Type. Must be 'Funds' or 'Equipment'.");
-		}
-		if (dto.getQuantity() <= 0) {
-			throw new ValidationException("Quantity must be greater than zero.");
-		}
-	}
-
-	private ResourceResponseDTO mapToResponseDTO(Resources entity) {
-	    ResourceResponseDTO response = new ResourceResponseDTO();
-	    response.setResourceId(entity.getResourceId());
-	    response.setProjectId(entity.getProjectId());
-	    
-	    // Now returning the stored title
-	    response.setProjectTitle(entity.getProjectTitle()); 
-	    
-	    response.setType(entity.getType());
-	    response.setQuantity(entity.getQuantity());
-	    response.setStatus(entity.getStatus());
-	    return response;
-	}
+    
+    private ProjectResponseDTO fallbackFetchProject(long projectId, Throwable throwable) {
+        log.error("Circuit Breaker Tripped/Active! Project service un-contactable for ID: {}. Error Reason: {}", 
+                projectId, throwable.getMessage());
+        
+        // Throw a clean exception handled by your GlobalExceptionHandler to notify users cleanly
+        throw new ResourceNotFoundException("Project Microservice is temporarily down or unreachable. Please try again in a few moments.");
+    }
+    
 }

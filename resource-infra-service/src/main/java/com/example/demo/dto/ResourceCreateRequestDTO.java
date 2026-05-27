@@ -1,8 +1,10 @@
 package com.example.demo.dto;
 
 
+import enums.ResourceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 @Data
 public class ResourceCreateRequestDTO {
@@ -11,9 +13,13 @@ public class ResourceCreateRequestDTO {
     private Long projectId;
 
     @NotBlank
-    private String type;
+    private String resourceName;
 
     @NotNull
-    private Double quantity;
+    private ResourceType type;
+
+    @NotNull
+    @Positive
+    private Double totalQuantity;
 
 }

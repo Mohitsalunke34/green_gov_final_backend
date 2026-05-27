@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.demo.dto.ProjectResponseDTO;
 
-@FeignClient(name = "SUSTAINABILITYPROJECTSERVICE", fallback = ProjectClientFallback.class)
+@FeignClient(name = "SUSTAINABILITYPROJECTSERVICE")
 public interface ProjectClient {
 
 	@GetMapping("/api/projects/{projectId}")

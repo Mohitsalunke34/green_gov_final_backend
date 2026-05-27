@@ -28,37 +28,37 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // ✅ ENABLE CORS (Spring Security 6 way)// to take request from react
+            // ENABLE CORS (Spring Security 6 way)// to take request from react
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // ✅ DISABLE CSRF (JWT based auth)
+            //  DISABLE CSRF (JWT based auth)
             .csrf(csrf -> csrf.disable())
 
-            // ✅ STATELESS SESSION
+            //  STATELESS SESSION
             .sessionManagement(sm ->
                 sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // ✅ AUTHORIZATION RULES
+            // AUTHORIZATION RULES
             .authorizeHttpRequests(auth -> auth
 
-                // ✅ PUBLIC
+                // PUBLIC
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/auth/login").permitAll()
 
-                // ✅ PROGRAMS
+                //  PROGRAMS
                 .requestMatchers(HttpMethod.GET, "/api/programs/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/programs/**")
                 .hasAuthority("PROGRAM_MANAGER")
 
-                // ✅ PROJECTS
+                //  PROJECTS
                 .requestMatchers(HttpMethod.POST, "/api/projects/**")
                 .hasAnyRole("CITIZEN", "BUSINESS_OWNER")
                 .requestMatchers(HttpMethod.PATCH, "/api/projects/**")
                 .hasAuthority("PROGRAM_MANAGER")
 
-                // ✅ INFRASTRUCTURE
+                // INFRASTRUCTURE
                 .requestMatchers(HttpMethod.POST, "/api/infrastructure/**")
                 .hasAuthority("PROGRAM_MANAGER")
                 .requestMatchers(HttpMethod.PATCH, "/api/infrastructure/**")
@@ -68,33 +68,45 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/infrastructure/**")
                 .authenticated()
 
-                // ✅ COMPLIANCE
+                //  COMPLIANCE
                 .requestMatchers(HttpMethod.POST, "/api/compliance/**")
                 .hasAuthority("COMPLIANCE_OFFICER")
 
-                // ✅ AUDIT
+                //  AUDIT
                 .requestMatchers("/api/audits/**")
                 .hasAuthority("AUDIT_MANAGER")
 
-                // ✅ INCENTIVE
+                //  INCENTIVE
                 .requestMatchers(HttpMethod.POST, "/api/incentives/**")
                 .hasAuthority("DISBURSEMENT_OFFICER")
+                
+                .requestMatchers(HttpMethod.GET, "/api/incentives/**")
+                .permitAll()
+                
+                .requestMatchers(HttpMethod.DELETE, "/api/incentives/**")
+                .hasAuthority("DISBURSEMENT_OFFICER")
+                
+                .requestMatchers(HttpMethod.POST, "/api/disbursements/**")
+                .hasAuthority("DISBURSEMENT_OFFICER")
+                
+                .requestMatchers(HttpMethod.GET, "/api/disbursements/**")
+                .hasAuthority("DISBURSEMENT_OFFICER")
 
-                // ✅ REPORTS
+                //  REPORTS
                 .requestMatchers(HttpMethod.POST, "/api/reports/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/reports/**").permitAll()
 
-                // ✅ EVERYTHING ELSE
+                //  EVERYTHING ELSE
                 .anyRequest().authenticated()
             )
 
-            // ✅ JWT FILTER
+            //  JWT FILTER
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ CORS CONFIGURATION SOURCE (USED BY SECURITY)
+    // CORS CONFIGURATION SOURCE (USED BY SECURITY)
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
 

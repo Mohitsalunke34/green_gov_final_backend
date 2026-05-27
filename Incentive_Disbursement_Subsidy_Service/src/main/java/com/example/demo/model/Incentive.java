@@ -18,8 +18,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "incentives",
@@ -31,7 +32,9 @@ import lombok.NoArgsConstructor;
            @UniqueConstraint(name = "uk_incentive_application",
                              columnNames = { "application_id" })
        })
-@Data
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -59,10 +62,6 @@ public class Incentive {
     @Column(nullable = false)
     private Double amount;
 
-    /**
-     * Remaining amount to be disbursed
-     * ✅ REQUIRED for Disbursement logic
-     */
     @Column(name = "remaining_amount", nullable = false)
     private Double remainingAmount;
 

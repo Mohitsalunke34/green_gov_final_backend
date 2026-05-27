@@ -1,169 +1,151 @@
 package com.example.demo.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.client.NotificationClient; // Added Import
 import com.example.demo.client.ProjectClient;
 import com.example.demo.dto.InfrastructureCreateRequestDTO;
-import com.example.demo.dto.InfrastructureResponseDTO;
-import com.example.demo.dto.InfrastructureStatusDTO;
-import com.example.demo.dto.NotificationRequestDTO; // Added Import
 import com.example.demo.dto.ProjectResponseDTO;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.dto.UpdateInfrastructureCapacityRequest;
+import com.example.demo.exception.InfrastructureNotFoundException;
 import com.example.demo.model.Infrastructure;
 import com.example.demo.repository.InfrastructureRepository;
 
+import enums.InfrastructureStatus;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class InfrastructureServiceImpl implements InfrastructureService {
 
-	private static final Logger logger = LoggerFactory.getLogger(InfrastructureServiceImpl.class);
-	private static final List<String> ALLOWED_STATUSES = Arrays.asList("Planned", "Under Construction", "Operational");
-
-	private final InfrastructureRepository infraRepository;
+	private final InfrastructureRepository infrastructureRepository;
 	private final ProjectClient projectClient;
-	private final NotificationClient notificationClient;
 
 	@Override
-	public InfrastructureResponseDTO addInfrastructure(InfrastructureCreateRequestDTO dto) {
-	    logger.info("Adding new infrastructure for Project ID: {}", dto.getProjectId());
+	@Transactional
+	public Infrastructure createInfrastructure(InfrastructureCreateRequestDTO request) {
+		log.info("Attempting to create infrastructure '{}' for Project ID: {}", request.getInfrastructureName(),
+				request.getProjectId());
 
-	    // 1. Fetch project details from the Sustainability Project Service
-	    ProjectResponseDTO project = fetchProject(dto.getProjectId());
+		ProjectResponseDTO project = fetchProject(request.getProjectId());
 
-	    // 2. Map the title into your Infrastructure entity
-	    Infrastructure infra = Infrastructure.builder()
-	            .projectId(dto.getProjectId())
-	            .projectTitle(project.getTitle()) // Mapping the fetched title
-	            .type(dto.getType())
-	            .location(dto.getLocation())
-	            .capacity(dto.getCapacity())
-	            .status("Planned")
-	            .build();
-
-	    Infrastructure saved = infraRepository.save(infra);
-
-	    // 3. Use the title in your notification for better clarity
-	    sendInternalNotification(
-	            "New " + dto.getType() + " infrastructure planned for Project: " + project.getTitle(),
-	            "INFRASTRUCTURE", saved.getInfraId());
-
-	    return mapToResponseDTO(saved);
-	}
-	@Override
-	public InfrastructureResponseDTO updateInfrastructure(long infraId, InfrastructureCreateRequestDTO dto) {
-	    Infrastructure existing = infraRepository.findById(infraId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Infrastructure not found with ID: " + infraId));
-
-	    ProjectResponseDTO project = fetchProject(dto.getProjectId());
-
-	    existing.setProjectId(dto.getProjectId());
-	    existing.setProjectTitle(project.getTitle()); 
-	    
-	    existing.setType(dto.getType());
-	    existing.setLocation(dto.getLocation());
-	    existing.setCapacity(dto.getCapacity());
-
-	    Infrastructure saved = infraRepository.save(existing);
-	    sendInternalNotification("Infrastructure ID " + infraId + " details updated for Project: " + project.getTitle(), 
-	            "INFRASTRUCTURE", infraId);
-
-	    return mapToResponseDTO(saved);
-	}
-
-	@Override
-	public InfrastructureResponseDTO updateStatus(InfrastructureStatusDTO dto) {
-		Infrastructure infra = infraRepository.findById(dto.getInfraId()).orElseThrow(
-				() -> new ResourceNotFoundException("Infrastructure not found with ID: " + dto.getInfraId()));
-
-		if (dto.getStatus() == null || !ALLOWED_STATUSES.contains(dto.getStatus())) {
-			logger.warn("Invalid status update attempt: {}", dto.getStatus());
-			throw new ValidationException("Invalid status. Allowed values: " + ALLOWED_STATUSES);
+		if (!"Approved".equalsIgnoreCase(project.getStatus())) {
+			log.warn("Validation failed: Project ID {} status is '{}', expected 'Approved'", request.getProjectId(),
+					project.getStatus());
+			throw new ValidationException("Infrastructure can only be managed for 'Approved' projects. Current status: "
+					+ project.getStatus());
 		}
 
-		infra.setStatus(dto.getStatus());
-		Infrastructure saved = infraRepository.save(infra);
+		Infrastructure infrastructure = Infrastructure.builder().projectId(request.getProjectId())
+				.projectName(project.getTitle()).infrastructureName(request.getInfrastructureName())
+				.type(request.getType()).location(request.getLocation()).capacity(request.getCapacity())
+				.utilizedCapacity(0.0).status(InfrastructureStatus.ACTIVE).build();
 
-		// Trigger Notification
-		sendInternalNotification("Infrastructure ID " + dto.getInfraId() + " status changed to " + dto.getStatus(),
-				"STATUS_CHANGE", dto.getInfraId());
-
-		return mapToResponseDTO(saved);
+		Infrastructure savedInfra = infrastructureRepository.save(infrastructure);
+		log.info("Infrastructure successfully created with ID: {} and status: {}", savedInfra.getInfraId(),
+				savedInfra.getStatus());
+		return savedInfra;
 	}
 
 	@Override
 	@Transactional
-	public void deleteInfrastructure(long infraId) {
-		Infrastructure infra = infraRepository.findById(infraId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cannot delete: ID " + infraId + " not found."));
+	public Infrastructure updateUtilizedCapacity(Long infraId, UpdateInfrastructureCapacityRequest request) {
+		log.info("Processing capacity utilization request for Infrastructure ID: {}, Added Capacity: {}", infraId,
+				request.getUtilizedCapacity());
 
-		if ("Operational".equalsIgnoreCase(infra.getStatus())) {
-			logger.warn("Delete blocked: Infrastructure ID {} is Operational.", infraId);
-			throw new ValidationException("Access Denied: Operational infrastructure cannot be deleted.");
+		Infrastructure infrastructure = infrastructureRepository.findById(infraId).orElseThrow(() -> {
+			log.error("Capacity update failed: Infrastructure ID {} not found", infraId);
+			return new InfrastructureNotFoundException("Infrastructure not found");
+		});
+
+		Double currentUtilized = infrastructure.getUtilizedCapacity();
+		if (currentUtilized == null) {
+			currentUtilized = 0.0;
 		}
 
-		infraRepository.deleteById(infraId);
+		Double newUtilizedCapacity = currentUtilized + request.getUtilizedCapacity();
 
-		sendInternalNotification("Infrastructure ID " + infraId + " has been removed from the system.",
-				"INFRASTRUCTURE", infraId);
+		if (newUtilizedCapacity > infrastructure.getCapacity()) {
+			log.warn(
+					"Utilization rejected: Exceeds maximum limits for Infra ID {}. Requested Total: {}, Max Capacity: {}",
+					infraId, newUtilizedCapacity, infrastructure.getCapacity());
+			throw new ValidationException(String.format(
+					"Cannot allocate capacity. Requested: %.2f. Current Utilized: %.2f. Remaining Available: %.2f.",
+					request.getUtilizedCapacity(), currentUtilized, (infrastructure.getCapacity() - currentUtilized)));
+		}
 
-		logger.info("Infrastructure ID {} successfully purged.", infraId);
+		infrastructure.setUtilizedCapacity(newUtilizedCapacity);
+
+		Double utilized = infrastructure.getUtilizedCapacity();
+
+		if (utilized == null || Math.abs(utilized) < 0.0001) {
+			infrastructure.setStatus(InfrastructureStatus.INACTIVE);
+		} else {
+			infrastructure.setStatus(InfrastructureStatus.UNDER_MAINTENANCE);
+		}
+
+		Infrastructure updatedInfra = infrastructureRepository.save(infrastructure);
+		log.info("Infra ID {} capacity updated to {}. Status set to: {}", infraId, newUtilizedCapacity,
+				updatedInfra.getStatus());
+
+		return updatedInfra;
 	}
-
-	private void sendInternalNotification(String message, String category, Long entityId) {
-		NotificationRequestDTO notifyReq = NotificationRequestDTO.builder().userId(1L).message(message)
-				.category(category).entityId(entityId).sendEmail(false).email("system@greengov.com").build();
-		notificationClient.createNotification(notifyReq);
-		logger.info("Notification request processed (either sent or handled by fallback).");
-	}
-
-	/* ================= READ METHODS ================= */
 
 	@Override
 	@Transactional(readOnly = true)
-	public InfrastructureResponseDTO getInfrastructure(long infraId) {
-		return infraRepository.findById(infraId).map(this::mapToResponseDTO)
-				.orElseThrow(() -> new ResourceNotFoundException("Infrastructure not found"));
+	public Page<Infrastructure> getAllInfrastructure(Pageable pageable) {
+		log.debug("Fetching page {} of infrastructures", pageable.getPageNumber());
+		return infrastructureRepository.findAll(pageable);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<InfrastructureResponseDTO> getAllInfrastructure() {
-		return infraRepository.findAll().stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+	public Infrastructure getInfrastructureById(Long infraId) {
+		log.debug("Fetching details for Infrastructure ID: {}", infraId);
+		return infrastructureRepository.findById(infraId).orElseThrow(() -> {
+			log.error("Fetch failed: Infrastructure ID {} not found", infraId);
+			return new InfrastructureNotFoundException("Infrastructure not found");
+		});
 	}
 
+	@Override
+	@Transactional
+	public void deleteInfrastructure(Long infraId) {
+		log.info("Attempting to delete Infrastructure ID: {}", infraId);
+
+		Infrastructure infrastructure = infrastructureRepository.findById(infraId).orElseThrow(() -> {
+			log.error("Deletion failed: Infrastructure ID {} not found", infraId);
+			return new InfrastructureNotFoundException("Infrastructure not found");
+		});
+
+		infrastructureRepository.delete(infrastructure);
+		log.info("Infrastructure ID {} successfully deleted from database", infraId);
+	}
+
+	@CircuitBreaker(name = "projectServiceBreaker", fallbackMethod = "fallbackFetchProject")
 	private ProjectResponseDTO fetchProject(long projectId) {
-	    ResponseEntity<ProjectResponseDTO> response = projectClient.getProjectById(projectId);
-	    ProjectResponseDTO project = response.getBody();
+		log.info("Calling Project Microservice via Feign for Project ID: {}", projectId);
+		ResponseEntity<ProjectResponseDTO> response = projectClient.getProjectById(projectId);
+		ProjectResponseDTO project = response.getBody();
 
-	    if (project == null || "SERVICE_FAILURE".equals(project.getStatus())) {
-	        throw new ResourceNotFoundException("Project Service is currently unavailable. Please try again later.");
-	    }
-	    
-	    return project;
+		if (project == null || "SERVICE_FAILURE".equals(project.getStatus())) {
+			throw new RuntimeException("Target payload missing or returned service failure state");
+		}
+		return project;
 	}
 
-	private InfrastructureResponseDTO mapToResponseDTO(Infrastructure entity) {
-		InfrastructureResponseDTO response = new InfrastructureResponseDTO();
-		response.setInfraId(entity.getInfraId());
-		response.setProjectId(entity.getProjectId());
-		response.setProjectTitle(entity.getProjectTitle());
-		response.setType(entity.getType());
-		response.setLocation(entity.getLocation());
-		response.setCapacity(entity.getCapacity());
-		response.setStatus(entity.getStatus());
-		return response;
+	private ProjectResponseDTO fallbackFetchProject(long projectId, Throwable throwable) {
+		log.error("Circuit Breaker Tripped! Project service down or unreachable for ID: {}. Reason: {}", projectId,
+				throwable.getMessage());
+		throw new InfrastructureNotFoundException(
+				"Project Microservice is temporarily down or unreachable. Please try again in a few moments.");
 	}
+
 }

@@ -1,21 +1,27 @@
 package com.example.demo.dto;
 
+import enums.InfrastructureType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
 public class InfrastructureCreateRequestDTO {
 
 	@NotNull
-	private Long projectId;
+    private Long projectId;
 
-	@NotBlank
-	private String type;
+    @NotBlank
+    private String infrastructureName;
 
-	@NotBlank
-	private String location;
+    @NotNull
+    private InfrastructureType type;
 
-	@NotNull
-	private Integer capacity;
+    @NotBlank
+    private String location;
+
+    @NotNull
+    @Positive
+    private Double capacity;
 }

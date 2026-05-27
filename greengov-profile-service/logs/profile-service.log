@@ -1,25 +1,75 @@
-2026-05-18 16:29:11.150  INFO 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 29832 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
-2026-05-18 16:29:11.180 DEBUG 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
-2026-05-18 16:29:11.181  INFO 29832 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
-2026-05-18 16:29:11.316  INFO 29832 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
-2026-05-18 16:29:11.316  INFO 29832 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=greengov-profile-service, profiles=[default], label=null, version=2155351758ecfad7185f19e1c181ff355fe7d99a, state=
-2026-05-18 16:29:11.322  INFO 29832 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-05-18 16:29:11.322  INFO 29832 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-05-18 16:29:15.709  INFO 29832 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-05-18 16:29:16.078  INFO 29832 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 335 ms. Found 2 JPA repository interfaces.
-2026-05-18 16:29:17.017  INFO 29832 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
-2026-05-18 16:29:19.100  INFO 29832 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 9056 (http)
-2026-05-18 16:29:19.130  INFO 29832 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-05-18 16:29:19.131  INFO 29832 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
-2026-05-18 16:29:19.313  INFO 29832 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 7990 ms
-2026-05-18 16:29:20.275  INFO 29832 --- [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-05-18 16:29:20.417  INFO 29832 --- [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
-2026-05-18 16:29:21.738  INFO 29832 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-05-18 16:29:21.817  INFO 29832 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-05-18 16:29:22.570  INFO 29832 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@53e2d4a0
-2026-05-18 16:29:22.574  INFO 29832 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-05-18 16:29:22.695  WARN 29832 --- [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-05-18 16:29:22.747  INFO 29832 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-05-27 08:49:47.603  INFO 24760 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 24760 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
+2026-05-27 08:49:47.705 DEBUG 24760 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-27 08:49:47.706  INFO 24760 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-27 08:49:47.904  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:47.905  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:47.905  WARN 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@26a624ad uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:47.907  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:47.907  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:47.907  WARN 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@7dc58c66 uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:47.907  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:47.908  INFO 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:47.908  WARN 24760 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@77ada582 uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:47.913  INFO 24760 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-27 08:49:47.913  INFO 24760 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-27 08:49:49.060  INFO 876 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 876 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
+2026-05-27 08:49:49.066 DEBUG 876 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-27 08:49:49.067  INFO 876 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-27 08:49:49.232  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:49.234  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:49.235  WARN 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@19b6a022 uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:49.238  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:49.264  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:49.266  WARN 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@5bc1dc48 uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:49.281  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:49:49.281  INFO 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Exception on Url - http://localhost:8711:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt. Will be trying the next url if available
+2026-05-27 08:49:49.282  WARN 876 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Could not locate PropertySource ([ConfigServerConfigDataResource@3e7d3bad uris = array<String>['http://localhost:8711'], optional = true, profiles = 'default']): I/O error on GET request for "http://localhost:8711/greengov-profile-service/default": Connection refused: getsockopt
+2026-05-27 08:49:49.289  INFO 876 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-27 08:49:49.289  INFO 876 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-27 08:49:53.062  INFO 24760 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-27 08:49:53.149  INFO 876 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-27 08:49:53.550  INFO 24760 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 452 ms. Found 2 JPA repository interfaces.
+2026-05-27 08:49:53.607  INFO 876 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 441 ms. Found 2 JPA repository interfaces.
+2026-05-27 08:49:54.912  INFO 876 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
+2026-05-27 08:49:55.215  INFO 24760 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
+2026-05-27 08:50:34.601  INFO 34672 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 34672 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
+2026-05-27 08:50:34.632 DEBUG 34672 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-27 08:50:34.635  INFO 34672 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-27 08:50:34.811  INFO 34672 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:50:34.811  INFO 34672 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=greengov-profile-service, profiles=[default], label=null, version=82364a57fd52b323a8c173f98f89d2386c05813a, state=
+2026-05-27 08:50:34.821  INFO 34672 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-27 08:50:34.822  INFO 34672 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-27 08:50:35.601  INFO 13944 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Starting GreengovProfileServiceApplication using Java 21.0.8 with PID 13944 (C:\Users\2481546\Downloads\14_05 1\greengov-profile-service\target\classes started by 2481546 in C:\Users\2481546\Downloads\14_05 1\greengov-profile-service)
+2026-05-27 08:50:35.611 DEBUG 13944 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-05-27 08:50:35.612  INFO 13944 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-27 08:50:35.771  INFO 13944 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8711
+2026-05-27 08:50:35.772  INFO 13944 --- [restartedMain] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=greengov-profile-service, profiles=[default], label=null, version=82364a57fd52b323a8c173f98f89d2386c05813a, state=
+2026-05-27 08:50:35.783  INFO 13944 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-05-27 08:50:35.784  INFO 13944 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-05-27 08:50:38.428  INFO 34672 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-27 08:50:39.030  INFO 34672 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 565 ms. Found 2 JPA repository interfaces.
+2026-05-27 08:50:39.585  INFO 13944 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-27 08:50:40.246  INFO 13944 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 631 ms. Found 2 JPA repository interfaces.
+2026-05-27 08:50:40.546  INFO 34672 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
+2026-05-27 08:50:41.811  INFO 13944 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=935b8af3-8a5d-3247-8b45-c01f7fd1256b
+2026-05-27 08:50:44.563  INFO 34672 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 9056 (http)
+2026-05-27 08:50:44.617  INFO 34672 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-27 08:50:44.619  INFO 34672 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-05-27 08:50:45.114  INFO 34672 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 10289 ms
+2026-05-27 08:50:46.159  INFO 13944 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 9056 (http)
+2026-05-27 08:50:46.208  INFO 13944 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-27 08:50:46.209  INFO 13944 --- [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-05-27 08:50:46.420  INFO 34672 --- [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-27 08:50:46.541  INFO 13944 --- [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 10755 ms
+2026-05-27 08:50:46.618  INFO 34672 --- [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-05-27 08:50:47.854  INFO 13944 --- [restartedMain] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-27 08:50:48.062  INFO 13944 --- [restartedMain] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-05-27 08:50:48.447  INFO 34672 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-27 08:50:48.554  INFO 34672 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-27 08:50:49.718  INFO 34672 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@57c06c7f
+2026-05-27 08:50:49.723  INFO 34672 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-27 08:50:49.888  WARN 34672 --- [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-27 08:50:49.939  INFO 34672 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [jdbc:mysql://localhost:3306/profile_service?createDatabaseIfNotExist=true]
 	Database driver: MySQL Connector/J
 	Database dialect: MySQLDialect
@@ -31,4 +81,122 @@
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-05-18 16:29:32.010  INFO 29832 --- [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-27 08:50:50.020  INFO 13944 --- [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-27 08:50:50.153  INFO 13944 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-27 08:50:51.504  INFO 13944 --- [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@77a33045
+2026-05-27 08:50:51.509  INFO 13944 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-27 08:50:51.693  WARN 13944 --- [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-27 08:50:51.743  INFO 13944 --- [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/profile_service?createDatabaseIfNotExist=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.44
+	Default catalog/schema: profile_service/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-27 08:50:53.523  INFO 34672 --- [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-27 08:50:53.696 DEBUG 34672 --- [restartedMain] org.hibernate.SQL                        : alter table documents modify column verification_status enum ('PENDING','REJECTED','VERIFIED') not null
+2026-05-27 08:50:54.295 DEBUG 34672 --- [restartedMain] org.hibernate.SQL                        : alter table participant_profiles modify column entity_type enum ('BUSINESS_OWNER','CITIZEN') not null
+2026-05-27 08:50:54.643 DEBUG 34672 --- [restartedMain] org.hibernate.SQL                        : alter table participant_profiles modify column status enum ('PENDING','REJECTED','VERIFIED') not null
+2026-05-27 08:50:54.832  INFO 34672 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-27 08:50:55.137  INFO 13944 --- [restartedMain] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-27 08:50:55.296 DEBUG 13944 --- [restartedMain] org.hibernate.SQL                        : alter table documents modify column verification_status enum ('PENDING','REJECTED','VERIFIED') not null
+2026-05-27 08:50:55.335 DEBUG 13944 --- [restartedMain] org.hibernate.SQL                        : alter table participant_profiles modify column entity_type enum ('BUSINESS_OWNER','CITIZEN') not null
+2026-05-27 08:50:55.387 DEBUG 13944 --- [restartedMain] org.hibernate.SQL                        : alter table participant_profiles modify column status enum ('PENDING','REJECTED','VERIFIED') not null
+2026-05-27 08:50:55.408  INFO 34672 --- [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-27 08:50:55.454  INFO 13944 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-27 08:50:56.133  INFO 13944 --- [restartedMain] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-27 08:50:57.599  WARN 13944 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-27 08:50:57.816  WARN 34672 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-27 08:50:58.254  INFO 13944 --- [restartedMain] o.s.c.openfeign.FeignClientFactoryBean   : For 'AUTH-SERVICE' URL not provided. Will try picking an instance via load-balancing.
+2026-05-27 08:50:58.451  INFO 34672 --- [restartedMain] o.s.c.openfeign.FeignClientFactoryBean   : For 'AUTH-SERVICE' URL not provided. Will try picking an instance via load-balancing.
+2026-05-27 08:51:03.059  INFO 13944 --- [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-05-27 08:51:03.116  INFO 34672 --- [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestClient.
+2026-05-27 08:51:03.346  WARN 13944 --- [restartedMain] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-27 08:51:03.390  WARN 34672 --- [restartedMain] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-27 08:51:03.544  INFO 13944 --- [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-27 08:51:03.579  INFO 34672 --- [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-27 08:51:03.609  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-27 08:51:03.618  INFO 13944 --- [restartedMain] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 08:51:03.654  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-27 08:51:03.655  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-27 08:51:03.655  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-27 08:51:03.655  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-27 08:51:03.655  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-27 08:51:03.655  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-27 08:51:03.656  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-27 08:51:03.656  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-27 08:51:03.667  INFO 34672 --- [restartedMain] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 08:51:03.693  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-27 08:51:03.694  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-27 08:51:03.694  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-27 08:51:03.694  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-27 08:51:03.695  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-27 08:51:03.695  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-27 08:51:03.696  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-27 08:51:04.271  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-27 08:51:04.276  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-27 08:51:04.281  INFO 13944 --- [restartedMain] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-27 08:51:04.284  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779852064283 with initial instances count: 3
+2026-05-27 08:51:04.316  INFO 13944 --- [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application GREENGOV-PROFILE-SERVICE with eureka with status UP
+2026-05-27 08:51:04.318  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-27 08:51:04.318  INFO 13944 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779852064318, current=UP, previous=STARTING]
+2026-05-27 08:51:04.322  INFO 13944 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056: registering service...
+2026-05-27 08:51:04.322  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-27 08:51:04.328  INFO 34672 --- [restartedMain] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-27 08:51:04.331  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779852064330 with initial instances count: 3
+2026-05-27 08:51:04.368  INFO 34672 --- [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application GREENGOV-PROFILE-SERVICE with eureka with status UP
+2026-05-27 08:51:04.368  INFO 13944 --- [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 9056 (http) with context path '/'
+2026-05-27 08:51:04.369  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779852064369, current=UP, previous=STARTING]
+2026-05-27 08:51:04.369  INFO 13944 --- [restartedMain] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 9056
+2026-05-27 08:51:04.373  INFO 34672 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056: registering service...
+2026-05-27 08:51:04.384  INFO 34672 --- [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application GREENGOV-PROFILE-SERVICE with eureka with status DOWN
+2026-05-27 08:51:04.384  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779852064384, current=DOWN, previous=UP]
+2026-05-27 08:51:04.385  WARN 34672 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-05-27 08:51:04.397  INFO 34672 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-27 08:51:04.405  INFO 34672 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-27 08:51:04.414  INFO 13944 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - registration status: 204
+2026-05-27 08:51:04.416  INFO 13944 --- [restartedMain] .c.g.p.GreengovProfileServiceApplication : Started GreengovProfileServiceApplication in 40.091 seconds (process running for 44.513)
+2026-05-27 08:51:04.421  INFO 34672 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-05-27 08:51:04.423  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2026-05-27 08:51:04.425  WARN 13944 --- [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-05-27 08:51:04.426  WARN 13944 --- [restartedMain] o.s.core.events.SpringDocAppInitializer  : SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-05-27 08:51:04.457  INFO 34672 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - registration status: 204
+2026-05-27 08:51:04.458  INFO 34672 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056: registering service...
+2026-05-27 08:51:04.466  INFO 34672 --- [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - registration status: 204
+2026-05-27 08:51:04.467  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Unregistering ...
+2026-05-27 08:51:04.481  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - deregister  status: 200
+2026-05-27 08:51:04.482  INFO 34672 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+2026-05-27 08:51:04.505  INFO 34672 --- [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-05-27 08:51:04.549 ERROR 34672 --- [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 9056 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 9056 or configure this application to listen on another port.
+
+2026-05-27 08:51:34.309  INFO 13944 --- [DiscoveryClient-HeartbeatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - Re-registering apps/GREENGOV-PROFILE-SERVICE
+2026-05-27 08:51:34.309  INFO 13944 --- [DiscoveryClient-HeartbeatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056: registering service...
+2026-05-27 08:51:34.316  INFO 13944 --- [DiscoveryClient-HeartbeatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_GREENGOV-PROFILE-SERVICE/LTIN718620.cts.com:greengov-profile-service:9056 - registration status: 204
+2026-05-27 08:56:03.671  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:01:03.678  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:06:03.679  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:11:03.685  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:16:03.708  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:21:03.712  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:26:03.715  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:31:03.722  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-27 09:36:03.733  INFO 13944 --- [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

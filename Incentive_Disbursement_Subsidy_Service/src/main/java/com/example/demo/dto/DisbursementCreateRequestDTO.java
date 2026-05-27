@@ -15,6 +15,5 @@ public class DisbursementCreateRequestDTO {
     @NotNull
     private Double amount;
 
- 
     private LocalDate paymentDate;
 }

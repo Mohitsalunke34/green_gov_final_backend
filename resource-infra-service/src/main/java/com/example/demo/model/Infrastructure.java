@@ -1,6 +1,16 @@
 package com.example.demo.model;
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import enums.InfrastructureStatus;
+import enums.InfrastructureType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,24 +28,36 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Infrastructure {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long infraId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long infraId;
 
-    @Column(name = "project_id", nullable = false)
-    private long projectId;
+	private Long projectId;
 
-    // Add this field to store the enriched data
-    private String projectTitle; 
+	@Column(nullable = false)
+	private String infrastructureName;
+	
+	@Column(name = "project_title") 
+	private String projectName;
 
-    @Column(nullable = false)
-    private String type;
+	@Enumerated(EnumType.STRING)
+	private InfrastructureType type;
 
-    @Column(nullable = false)
-    private String location;
+	@Column(nullable = false)
+	private String location;
 
-    @Column(nullable = false)
-    private int capacity;
+	@Column(nullable = false)
+	private Double capacity;
 
-    private String status;
+	private Double utilizedCapacity;
+
+	@Enumerated(EnumType.STRING)
+	private InfrastructureStatus status;
+
+	@CreationTimestamp
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
+	
 }

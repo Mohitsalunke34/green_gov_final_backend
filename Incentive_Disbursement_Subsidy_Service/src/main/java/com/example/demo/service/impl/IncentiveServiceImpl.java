@@ -1,3 +1,4 @@
+
 package com.example.demo.service.impl;
 
 import java.math.BigDecimal;
@@ -7,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.client.OfficerClient;
 import com.example.demo.client.ProgramClient;
@@ -16,12 +16,15 @@ import com.example.demo.dto.IncentiveResponseDTO;
 import com.example.demo.dto.OfficerDTO;
 import com.example.demo.dto.ProgramDTO;
 import com.example.demo.dto.client_dto.ApprovedApplicationLookupDTO;
+import com.example.demo.exception.InvalidIncentiveException;
 import com.example.demo.model.Incentive;
 import com.example.demo.modelMapper.IncentiveMapper;
 import com.example.demo.repo.DisbursementRepository;
 import com.example.demo.repo.IncentiveRepository;
 import com.example.demo.service.IncentiveService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,73 +40,89 @@ public class IncentiveServiceImpl implements IncentiveService {
 
 	@Override
 	@Transactional
-	public IncentiveResponseDTO createIncentive(IncentiveCreateRequestDTO dto, Long officerUserId) {
+	@CircuitBreaker(name = "programService", fallbackMethod = "createIncentiveFallback")
+	public IncentiveResponseDTO createIncentive(
+	        IncentiveCreateRequestDTO dto,
+	        Long officerUserId) {
 
-		/* ======================= 0️⃣ Validate Officer ======================= */
-		List<OfficerDTO> officers = officerClient.getActiveDisbursementOfficers(officerUserId);
+	    List<OfficerDTO> officers =
+	            officerClient.getActiveDisbursementOfficers(officerUserId);
 
-		OfficerDTO officer = officers.stream().filter(o -> o.getUserId().equals(officerUserId)).findFirst()
-				.orElseThrow(() -> new RuntimeException("User is not an APPROVED DISBURSEMENT officer"));
+	    OfficerDTO officer = officers.stream()
+	            .filter(o -> o.getUserId().equals(officerUserId))
+	            .findFirst()
+	            .orElseThrow(() ->
+	                    new InvalidIncentiveException("User is not an approved disbursement officer"));
 
-		log.info("Creating incentive by officer {}", officer.getUsername());
+	    log.info("Creating incentive by officer {}", officer.getUsername());
 
-		/*
-		 * ======================= 1️⃣ Resolve APPROVED Application
-		 * =======================
-		 */
-		List<ApprovedApplicationLookupDTO> applications = programClient
-				.getApprovedApplicationsByParticipant(dto.getParticipantId());
+	    List<ApprovedApplicationLookupDTO> applications =
+	            programClient.getApprovedApplicationsByParticipant(dto.getParticipantId());
 
-		if (applications.isEmpty()) {
-			throw new IllegalStateException("No approved application found for this participant");
-		}
+	    if (applications.isEmpty()) {
+	        throw new InvalidIncentiveException("No approved application found for this participant");
+	    }
 
-		// ✅ Pick first approved application (can be enhanced later)
-		ApprovedApplicationLookupDTO application = applications.get(0);
+	    ApprovedApplicationLookupDTO application = applications.get(0);
 
-		Long applicationId = application.getApplicationId();
-		Long programId = application.getProgramId();
+	    Long applicationId = application.getApplicationId();
+	    Long programId = application.getProgramId();
 
-		/* ======================= 2️⃣ Prevent duplicates ======================= */
-		incentiveRepo.findByApplicationId(applicationId).ifPresent(existing -> {
-			throw new IllegalStateException("Incentive already exists for this application");
-		});
+	    incentiveRepo.findByApplicationId(applicationId)
+	            .ifPresent(existing -> {
+	                throw new InvalidIncentiveException("Incentive already exists for this application");
+	            });
 
-		/* ======================= 3️⃣ Fetch Program ======================= */
-		ProgramDTO program = programClient.getProgramById(programId);
+	    ProgramDTO program = programClient.getProgramById(programId);
 
-		if (!"ACTIVE".equalsIgnoreCase(program.getStatus())) {
-			throw new IllegalStateException("Program not active");
-		}
+	    if (!"ACTIVE".equalsIgnoreCase(program.getStatus())) {
+	        throw new InvalidIncentiveException("Program is not active");
+	    }
 
-		/* ======================= 4️⃣ Budget Check ======================= */
-		BigDecimal requestedAmount = BigDecimal.valueOf(dto.getAmount());
+	    BigDecimal requestedAmount = BigDecimal.valueOf(dto.getAmount());
 
-		BigDecimal remainingBudget = program.getRemainingProgramBudget() != null ? program.getRemainingProgramBudget()
-				: program.getBudget();
+	    BigDecimal remainingBudget =
+	            program.getRemainingProgramBudget() != null
+	                    ? program.getRemainingProgramBudget()
+	                    : program.getBudget();
 
-		if (requestedAmount.compareTo(remainingBudget) > 0) {
-			throw new IllegalStateException("Insufficient program budget");
-		}
+	    if (requestedAmount.compareTo(remainingBudget) > 0) {
+	        throw new InvalidIncentiveException("Insufficient program budget");
+	    }
 
-		/* ======================= 5️⃣ Deduct Budget ======================= */
-		programClient.deductProgramBudget(programId, requestedAmount);
+	    
+	    programClient.deductProgramBudget(programId, requestedAmount);
 
-		/* ======================= 6️⃣ Persist Incentive ======================= */
-		Incentive incentive = Incentive.builder().applicationId(applicationId) // ✅ INTERNAL ONLY
-				.programId(programId).beneficiaryId(dto.getParticipantId()).amount(dto.getAmount())
-				.remainingAmount(dto.getAmount()).sanctionedDate(LocalDate.now()).status("APPROVED")
-				.approvedBy(officerUserId).build();
+	    Incentive incentive = Incentive.builder()
+	            .applicationId(applicationId)
+	            .programId(programId)
+	            .beneficiaryId(dto.getParticipantId())
+	            .amount(dto.getAmount())
+	            .remainingAmount(dto.getAmount())
+	            .sanctionedDate(LocalDate.now())
+	            .status("APPROVED")
+	            .approvedBy(officerUserId)
+	            .build();
 
-		Incentive saved = incentiveRepo.save(incentive);
+	    Incentive saved = incentiveRepo.save(incentive);
 
-		log.info("Incentive created | IncentiveId={} | ParticipantId={}", saved.getIncentiveId(),
-				dto.getParticipantId());
+	    log.info("Incentive created | IncentiveId={} | ParticipantId={}",
+	            saved.getIncentiveId(), dto.getParticipantId());
 
-		return IncentiveMapper.toDTO(saved);
+	    return IncentiveMapper.toDTO(saved);
 	}
+	
+	public IncentiveResponseDTO createIncentiveFallback(IncentiveCreateRequestDTO dto,
+	        Long officerUserId,Exception ex) {
 
-	/* ======================= READ APIs ======================= */
+	    log.error("Fallback triggered for createIncentive", ex);
+
+	    throw new InvalidIncentiveException(
+	            "Service temporarily unavailable. Please try again later."
+	    );
+	}
+	       
+
 
 	@Override
 	public List<IncentiveResponseDTO> getByBeneficiary(Long beneficiaryId) {
@@ -113,7 +132,7 @@ public class IncentiveServiceImpl implements IncentiveService {
 	@Override
 	public IncentiveResponseDTO getByIncentiveId(Long incentiveId) {
 		return incentiveRepo.findByIncentiveId(incentiveId).map(IncentiveMapper::toDTO)
-				.orElseThrow(() -> new RuntimeException("Incentive not found"));
+				.orElseThrow(() -> new InvalidIncentiveException("Incentive not found"));
 	}
 
 	@Override
@@ -147,14 +166,9 @@ public class IncentiveServiceImpl implements IncentiveService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public boolean incentiveExists(Long incentiveId) {
 		return incentiveRepo.existsById(incentiveId);
 	}
 
-	@Override
-	public IncentiveResponseDTO getByApplication(Long applicationId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

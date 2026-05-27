@@ -10,7 +10,7 @@ public class OfficerDTO {
     private Long userId;
     private String username;
  
-    /** DISBURSEMENT_OFFICER, COMPLIANCE_OFFICER, etc */
+    // DISBURSEMENT_OFFICER 
     private String officerType;
  
     private String department;

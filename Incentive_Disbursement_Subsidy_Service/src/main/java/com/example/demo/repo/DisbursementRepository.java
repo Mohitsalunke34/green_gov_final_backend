@@ -12,18 +12,13 @@ import com.example.demo.model.Incentive;
 @Repository
 public interface DisbursementRepository extends JpaRepository<Disbursement, Long> {
 
-    /**
-     * Fetch all disbursements for a given incentive.
-     */
+
     List<Disbursement> findByIncentive(Incentive incentive);
 
-    /**
-     * Fetch all disbursements processed by an officer.
-     * Officer belongs to another microservice → use ID.
-     */
-    List<Disbursement> findByOfficerUserId(Long officerUserId);
+//    List<Disbursement> findByOfficerUserId(Long officerUserId);
     
-
+    List<Disbursement> findByIncentive_IncentiveIdIn(List<Long> incentiveIds);
+    
 	@Query("SELECT COALESCE(SUM(d.amount), 0) FROM Disbursement d")
 	Double getTotalDisbursedAmount();
 
